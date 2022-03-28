@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @Builder
 @Accessors(chain = true)
-@TableName("promotion") // 指明当前类为数据库中的 billboard 表
+@TableName("promotion") // 指明当前类为数据库中的 promotion 表
 @NoArgsConstructor
 @AllArgsConstructor
 public class Promotion implements Serializable {

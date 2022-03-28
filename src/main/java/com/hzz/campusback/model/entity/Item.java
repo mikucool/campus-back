@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @Builder
 @Accessors(chain = true)
-@TableName("items") // 指明当前类为数据库中的 billboard 表
+@TableName("items") // 指明当前类为数据库中的 items 表
 @NoArgsConstructor
 @AllArgsConstructor
 public class Item implements Serializable {
