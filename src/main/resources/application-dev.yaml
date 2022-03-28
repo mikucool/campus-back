@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+web:
+  domain: http//localhost
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: hzz
+    url: jdbc:mysql://localhost:3306/campus_v1
+    type: com.zaxxer.hikari.HikariDataSource
+logging:
+  level:
+    root: info
+    com.hzz.campusrear: info
+
+
+#设置：在控制台显示查询数据库时所用到的 sql 语句
