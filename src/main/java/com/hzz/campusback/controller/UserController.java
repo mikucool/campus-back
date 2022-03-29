@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.hzz.campusback.jwt.JwtUtil.USER_NAME;
+
 @RestController   // 将返回的 java 对象封装成 json 格式的数据
 @RequestMapping("/campus/user")
 public class UserController extends BaseController {
@@ -43,5 +45,13 @@ public class UserController extends BaseController {
         map.put("token", token);
         return ApiResult.success(map, "登录成功");
     }
+
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public ApiResult<User> getUser(@RequestHeader(value = USER_NAME) String username) { //从请求头中取出名为USER_NAME的变量
+        User user = userService.getUserByUsername(username);
+        return ApiResult.success(user);
+    }
+
+
 
 }
