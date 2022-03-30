@@ -43,7 +43,7 @@ public class JwtUtil {
                         .setSigningKey(SECRET)
                         .parseClaimsJws(token.replace(TOKEN_PREFIX, "")) // 去掉前缀
                         .getBody();
-                // 不出意外解密的 map 对应key: userName(自定义常量), value: userId(解密出来的 userId)
+                // 不出意外解密的 map 对应key: userName(自定义常量), value: username(解密出来的 username)
                 // 创建自定义 http 类，对请求进行处理，将解密出来的用户信息（userId）添加到请求头中的 userName 属性中
                 return new CustomHttpServletRequest(request, body);
             } catch (Exception e) {
