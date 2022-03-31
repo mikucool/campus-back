@@ -17,7 +17,9 @@ import com.hzz.campusback.utils.MD5Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -36,5 +38,33 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         baseMapper.insert(tag);
 
         return tag;
+    }
+
+
+    /**
+     * 插入多个标签
+     * @param tagNames
+     * @return
+     */
+    @Override
+    public List<Tag> insertTags(List<String> tagNames) {
+        List<Tag> tagList = new ArrayList<>();
+        // 遍历标签
+        for (String tagName : tagNames) {
+            // 查询标签
+            Tag tag = this.baseMapper.selectOne(new LambdaQueryWrapper<Tag>().eq(Tag::getName, tagName));
+            // 判断是否存在标签
+            if (tag == null) {
+                // 如果不存在则插入
+                tag = Tag.builder().name(tagName).build();
+                this.baseMapper.insert(tag);
+            } else {
+                // 如果存在则增加话题数
+                tag.setTopicCount(tag.getTopicCount() + 1);
+                this.baseMapper.updateById(tag);
+            }
+            tagList.add(tag);
+        }
+        return tagList;
     }
 }

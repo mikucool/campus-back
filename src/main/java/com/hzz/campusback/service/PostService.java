@@ -2,7 +2,9 @@ package com.hzz.campusback.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hzz.campusback.model.dto.CreateTopicDTO;
 import com.hzz.campusback.model.entity.Post;
+import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
 
 public interface PostService extends IService<Post> {
@@ -15,14 +17,16 @@ public interface PostService extends IService<Post> {
      * @return
      */
     Page<PostVO> getList(Page<PostVO> page, String tab);
-/*    *//**
+    /**
      * 发布
      *
      * @param dto
      * @param principal
      * @return
-     *//*
+     */
     Post create(CreateTopicDTO dto, User principal);
+
+    /*
 
     *//**
      * 查看话题详情

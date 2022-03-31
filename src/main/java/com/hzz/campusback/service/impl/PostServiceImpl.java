@@ -1,20 +1,28 @@
 package com.hzz.campusback.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hzz.campusback.mapper.TagMapper;
 import com.hzz.campusback.mapper.TopicMapper;
 import com.hzz.campusback.mapper.UserMapper;
+import com.hzz.campusback.model.dto.CreateTopicDTO;
 import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.Tag;
 import com.hzz.campusback.model.entity.TopicTag;
+import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
 import com.hzz.campusback.service.PostService;
+import com.hzz.campusback.service.TagService;
+import com.hzz.campusback.service.TopicTagService;
 import com.hzz.campusback.service.UserService;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -31,6 +39,9 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private com.hzz.campusback.service.TopicTagService topicTagService;
@@ -58,5 +69,36 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
                 topic.setTags(tags);
             }
         });
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class) // 使用事务
+    public Post create(CreateTopicDTO dto, User user) {
+        Post topic1 = this.baseMapper.selectOne(new LambdaQueryWrapper<Post>().eq(Post::getTitle, dto.getTitle()));
+        Assert.isNull(topic1, "话题已存在，请修改");
+
+        // 封装
+        Post topic = Post.builder()
+                .userId(user.getId())
+                .title(dto.getTitle())
+                .content(EmojiParser.parseToAliases(dto.getContent()))
+                .createTime(new Date())
+                .build();
+        this.baseMapper.insert(topic);  // 插入 post 表
+
+        // 用户积分增加
+        int newScore = user.getScore() + 5;
+        userMapper.updateById(user.setScore(newScore)); // 修改用户表的 score 属性
+
+        // 标签
+        if (!ObjectUtils.isEmpty(dto.getTags())) {
+            // 保存标签
+            List<Tag> tags = tagService.insertTags(dto.getTags()); // 在 tag 表中创建不存在的标签，如果标签存在则增加话题数
+            // 处理标签与话题的关联
+            topicTagService.createTopicTag(topic.getId(), tags);   // 在帖子和标签的关系表中添加关系数据
+        }
+
+        return topic;
     }
 }

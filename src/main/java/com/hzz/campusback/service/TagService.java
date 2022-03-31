@@ -17,7 +17,7 @@ public interface TagService extends IService<Tag> {
      * @param tags
      * @return
      */
-//    List<Tag> insertTags(List<String> tags);
+    List<Tag> insertTags(List<String> tags);
     /**
      * 获取标签关联话题
      *
