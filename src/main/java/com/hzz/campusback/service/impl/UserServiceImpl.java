@@ -25,8 +25,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //查询是否有相同用户名的用户
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, dto.getName()).or().eq(User::getEmail, dto.getEmail());
-        User umsUser = baseMapper.selectOne(wrapper);
-        if (!ObjectUtils.isEmpty(umsUser)) {
+        User user = baseMapper.selectOne(wrapper);
+        if (!ObjectUtils.isEmpty(user)) {
             ApiAsserts.fail("账号或邮箱已存在！");
         }
         // 构造一个用户，利用了 @Builder 简化了构造方法和 set 方法
