@@ -21,4 +21,10 @@ public interface TopicMapper extends BaseMapper<Post> {
      */
     Page<PostVO> selectListAndPage(@Param("page") Page<PostVO> page, @Param("tab") String tab);
 
-   }
+    /**
+     * 查询返回推荐的帖子
+     * @param id
+     * @return
+     */
+    List<Post> selectRecommend(@Param("id") String id);
+}

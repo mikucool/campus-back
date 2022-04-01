@@ -40,4 +40,12 @@
         </if>
     </select>
 
+    <select id="selectRecommend" resultType="com.hzz.campusback.model.entity.Post">
+        select *
+        from post t
+        where t.id != #{id}
+        order by rand(), t.view
+        limit 10
+    </select>
+
 </mapper>

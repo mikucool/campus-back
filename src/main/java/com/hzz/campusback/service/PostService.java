@@ -7,6 +7,7 @@ import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
 
+import java.util.List;
 import java.util.Map;
 
 public interface PostService extends IService<Post> {
@@ -42,9 +43,9 @@ public interface PostService extends IService<Post> {
      *
      * @param id
      * @return
-     *//*
+     */
     List<Post> getRecommend(String id);
-    *//**
+    /**
      * 关键字检索
      *
      * @param keyword

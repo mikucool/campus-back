@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hzz.campusback.common.exception.ApiAsserts;
 import com.hzz.campusback.jwt.JwtUtil;
+import com.hzz.campusback.mapper.FollowMapper;
 import com.hzz.campusback.mapper.TopicMapper;
 import com.hzz.campusback.mapper.UserMapper;
 import com.hzz.campusback.model.dto.LoginDTO;
 import com.hzz.campusback.model.dto.RegisterDTO;
+import com.hzz.campusback.model.entity.Follow;
 import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.ProfileVO;
@@ -28,6 +30,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private TopicMapper topicMapper;
+
+    @Autowired
+    private FollowMapper followMapper;
 
     @Override
     public User executeRegister(RegisterDTO dto) {
@@ -83,6 +88,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         ProfileVO profile = new ProfileVO();
         User user = baseMapper.selectById(id);
         BeanUtils.copyProperties(user, profile);    // 把 user 对象的属性设置到 profile 的对应属性上
+
+        // 用户文章数
+        int count = topicMapper.selectCount(new LambdaQueryWrapper<Post>().eq(Post::getUserId, id));
+        profile.setTopicCount(count);
+
+        // 粉丝数
+        int followers = followMapper.selectCount((new LambdaQueryWrapper<Follow>().eq(Follow::getParentId, id)));
+        profile.setFollowerCount(followers);
 
         return profile;
     }

@@ -136,4 +136,8 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
         return map;
     }
 
+    @Override
+    public List<Post> getRecommend(String id) {
+        return this.baseMapper.selectRecommend(id);
+    }
 }
