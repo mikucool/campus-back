@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.hzz.campusback.model.dto.LoginDTO;
 import com.hzz.campusback.model.dto.RegisterDTO;
 import com.hzz.campusback.model.entity.User;
+import com.hzz.campusback.model.vo.ProfileVO;
 
 public interface UserService extends IService<User> {
     // 继承了 mybatis plus 的 IService
@@ -29,4 +30,12 @@ public interface UserService extends IService<User> {
      * @return  生成的 jwt 的 token
      */
     String executeLogin(LoginDTO dto);
+
+    /**
+     * 获取用户信息
+     *
+     * @param id 用户ID
+     * @return
+     */
+    ProfileVO getUserProfile(String id);
 }

@@ -7,6 +7,8 @@ import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
 
+import java.util.Map;
+
 public interface PostService extends IService<Post> {
 
     /**
@@ -26,16 +28,16 @@ public interface PostService extends IService<Post> {
      */
     Post create(CreateTopicDTO dto, User principal);
 
-    /*
 
-    *//**
+
+    /**
      * 查看话题详情
      *
      * @param id
      * @return
-     *//*
+     */
     Map<String, Object> viewTopic(String id);
-    *//**
+    /**
      * 获取随机推荐10篇
      *
      * @param id

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+import java.util.Map;
+
 import static com.hzz.campusback.jwt.JwtUtil.USER_NAME;
 
 
@@ -53,5 +55,12 @@ public class PostController extends BaseController {
         User user = userService.getUserByUsername(userName); // 根据用户名查询用户
         Post topic = postService.create(dto, user); // 创建帖子并进行各种关系设置
         return ApiResult.success(topic);
+    }
+
+    // 帖子信息
+    @GetMapping()
+    public ApiResult<Map<String, Object>> view(@RequestParam("id") String id) {
+        Map<String, Object> map = postService.viewTopic(id);
+        return ApiResult.success(map);
     }
 }

@@ -15,6 +15,7 @@ import com.hzz.campusback.model.entity.Tag;
 import com.hzz.campusback.model.entity.TopicTag;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
+import com.hzz.campusback.model.vo.ProfileVO;
 import com.hzz.campusback.service.PostService;
 import com.hzz.campusback.service.TagService;
 import com.hzz.campusback.service.TopicTagService;
@@ -101,4 +102,38 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
 
         return topic;
     }
+
+    @Override
+    public Map<String, Object> viewTopic(String id) {
+        Map<String, Object> map = new HashMap<>(16);
+        Post topic = this.baseMapper.selectById(id);
+        Assert.notNull(topic, "当前话题不存在,或已被作者删除");
+
+        /*当帖子村在时，就对帖子信息进行处理*/
+        // 查询话题详情，并更新查看数
+        topic.setView(topic.getView() + 1);
+        this.baseMapper.updateById(topic);
+        // 对帖子内容的 emoji 转码
+        topic.setContent(EmojiParser.parseToUnicode(topic.getContent()));
+        map.put("topic", topic);
+        // 查找帖子对应的标签
+        QueryWrapper<TopicTag> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(TopicTag::getTopicId, topic.getId());
+        Set<String> set = new HashSet<>();
+        // 遍历取出中间表中的标签 id 存放到 set 中
+        for (TopicTag articleTag : topicTagService.list(wrapper)) {
+            set.add(articleTag.getTagId());
+        }
+        // 根据 id 集合查询标签对象
+        List<Tag> tags = tagService.listByIds(set);
+        map.put("tags", tags);
+
+        // 作者信息
+
+        ProfileVO user = userService.getUserProfile(topic.getUserId());
+        map.put("user", user);
+
+        return map;
+    }
+
 }
