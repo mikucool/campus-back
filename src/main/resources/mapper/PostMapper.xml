@@ -33,7 +33,7 @@
             </if>
         </where>
         <if test="tab != 'hot'">
-            order by t.create_time desc;
+            order by t.create_time desc
         </if>
         <if test="tab == 'hot'">
             order by t.view desc, t.create_time desc
