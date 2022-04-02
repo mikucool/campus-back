@@ -1,6 +1,9 @@
 package com.hzz.campusback.controller;
 
 import com.hzz.campusback.common.api.ApiResult;
+import com.hzz.campusback.model.dto.CommentDTO;
+import com.hzz.campusback.model.entity.Comment;
+import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.CommentVO;
 import com.hzz.campusback.service.CommentService;
 import com.hzz.campusback.service.UserService;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static com.hzz.campusback.jwt.JwtUtil.USER_NAME;
 
 
 @RestController
@@ -26,11 +31,11 @@ public class CommentController extends BaseController {
     }
 
 
-//    @PostMapping("/add_comment")
-//    public ApiResult<Comment> add_comment(@RequestHeader(value = USER_NAME) String userName,
-//                                             @RequestBody CommentDTO dto) {
-//        User user = userService.getUserByUsername(userName);
-//        Comment comment = commentService.create(dto, user);
-//        return ApiResult.success(comment);
-//    }
+    @PostMapping("/add_comment")
+    public ApiResult<Comment> add_comment(@RequestHeader(value = USER_NAME) String userName,
+                                          @RequestBody CommentDTO dto) {
+        User user = userService.getUserByUsername(userName);
+        Comment comment = commentService.create(dto, user);
+        return ApiResult.success(comment);
+    }
 }

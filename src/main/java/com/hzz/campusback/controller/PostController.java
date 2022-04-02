@@ -1,5 +1,6 @@
 package com.hzz.campusback.controller;
 
+import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzz.campusback.common.api.ApiResult;
 import com.hzz.campusback.model.dto.CreateTopicDTO;
@@ -10,10 +11,13 @@ import com.hzz.campusback.model.vo.PostVO;
 import com.hzz.campusback.service.PostService;
 import com.hzz.campusback.service.TagService;
 import com.hzz.campusback.service.UserService;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -71,4 +75,27 @@ public class PostController extends BaseController {
         List<Post> topics = postService.getRecommend(id);
         return ApiResult.success(topics);
     }
+
+    // 编辑
+    @PostMapping("/update")
+    public ApiResult<Post> update(@RequestHeader(value = USER_NAME) String userName, @Valid @RequestBody Post post) {
+        User user = userService.getUserByUsername(userName);
+        Assert.isTrue(user.getId().equals(post.getUserId()), "非本人无权修改");
+        post.setModifyTime(new Date());
+        post.setContent(EmojiParser.parseToAliases(post.getContent()));
+        postService.updateById(post);
+        return ApiResult.success(post);
+    }
+
+    // 删除
+    @DeleteMapping("/delete/{id}")
+    public ApiResult<String> delete(@RequestHeader(value = USER_NAME) String userName, @PathVariable("id") String id) {
+        User user = userService.getUserByUsername(userName);
+        Post byId = postService.getById(id);
+        Assert.notNull(byId, "来晚一步，话题已不存在");
+        Assert.isTrue(byId.getUserId().equals(user.getId()), "你为什么可以删除别人的话题？？？");
+        postService.removeById(id);
+        return ApiResult.success(null,"删除成功");
+    }
+
 }
