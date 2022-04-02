@@ -45,6 +45,8 @@ public interface PostService extends IService<Post> {
      * @return
      */
     List<Post> getRecommend(String id);
+
+    Page<PostVO> searchByKey(String keyword, Page<PostVO> page);
     /**
      * 关键字检索
      *

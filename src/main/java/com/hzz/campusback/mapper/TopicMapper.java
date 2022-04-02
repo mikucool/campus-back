@@ -27,4 +27,6 @@ public interface TopicMapper extends BaseMapper<Post> {
      * @return
      */
     List<Post> selectRecommend(@Param("id") String id);
+
+    Page<PostVO> searchByKey(@Param("page") Page<PostVO> page, @Param("keyword") String keyword);
 }
