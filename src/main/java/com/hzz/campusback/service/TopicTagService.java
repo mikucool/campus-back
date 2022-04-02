@@ -5,6 +5,7 @@ import com.hzz.campusback.model.entity.Tag;
 import com.hzz.campusback.model.entity.TopicTag;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface TopicTagService extends IService<TopicTag> {
@@ -25,4 +26,6 @@ public interface TopicTagService extends IService<TopicTag> {
      * @return
      */
     void createTopicTag(String id, List<Tag> tags);
+
+    Set<String> selectTopicIdsByTagId(String id);
 }

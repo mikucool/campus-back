@@ -1,29 +1,30 @@
 package com.hzz.campusback.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.hzz.campusback.common.exception.ApiAsserts;
-import com.hzz.campusback.jwt.JwtUtil;
 import com.hzz.campusback.mapper.TagMapper;
-import com.hzz.campusback.mapper.UserMapper;
-import com.hzz.campusback.model.dto.LoginDTO;
-import com.hzz.campusback.model.dto.RegisterDTO;
+import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.Tag;
-import com.hzz.campusback.model.entity.User;
+import com.hzz.campusback.service.PostService;
 import com.hzz.campusback.service.TagService;
-import com.hzz.campusback.service.UserService;
-import com.hzz.campusback.utils.MD5Utils;
+import com.hzz.campusback.service.TopicTagService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
+
+    @Autowired
+    private TopicTagService topicTagService;
+    @Autowired
+    private PostService postService;
 
     /**
      * 添加一个 tag
@@ -66,5 +67,16 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
             tagList.add(tag);
         }
         return tagList;
+    }
+
+    @Override
+    public Page<Post> selectTopicsByTagId(Page<Post> topicPage, String id) {
+
+        // 获取关联的话题ID
+        Set<String> ids = topicTagService.selectTopicIdsByTagId(id);
+        LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(Post::getId, ids);
+
+        return postService.page(topicPage, wrapper);
     }
 }
