@@ -75,5 +75,24 @@
         </where>
         order by t.view desc, t.create_time desc
     </select>
+    <select id="selectPages" resultMap="topicVO">
+        SELECT t.id,
+        t.title,
+        t.user_id,
+        t.comments,
+        t.view,
+        t.collects,
+        t.top,
+        t.essence,
+        t.create_time,
+        t.modify_time,
+        u.username,
+        u.alias,
+        u.avatar
+        FROM post t
+        LEFT JOIN user u
+        ON t.user_id = u.id
+        order by t.view desc, t.create_time desc
+    </select>
 
 </mapper>

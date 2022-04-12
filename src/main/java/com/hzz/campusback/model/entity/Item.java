@@ -27,6 +27,8 @@ public class Item implements Serializable {
     @TableField("poster")      // 表示表的 poster 字段
     private String poster;
 
+    @TableField("location")      // 表示表的 poster 字段
+    private String location;
     // 0 表示正在展示， 1 表示已经解决， 2 表示过期
     @Builder.Default
     @TableField("status")

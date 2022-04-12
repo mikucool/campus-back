@@ -49,11 +49,45 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
 
     @Override
     public Page<PostVO> getList(Page<PostVO> page, String tab) {
-        // 查询话题
+        // 查询话题并封装到 VO 中
         Page<PostVO> iPage = this.baseMapper.selectListAndPage(page, tab);
         // 利用中间表，根据话题 id 查询标签，并设置到话题 vo 对象中
-        setTopicTags(iPage);
+        this.setTopicTags(iPage);
         return iPage;
+    }
+
+    @Override
+    public Page<PostVO> getListByTag(Page<PostVO> page, String tab) {
+        Page<PostVO> resPage = new Page<>();
+        // 1. 查询所有话题并封装到 VO 中
+        Page<PostVO> iPage = this.baseMapper.selectPages(page);
+        // 2. 将含有标签 tab 的标签集合封装到 VO 中
+        // 获取页面记录并遍历
+        iPage.getRecords().forEach(topic -> {
+            // 利用中间表，根据话题 id 查询对应标签 id 的中间对象（TopicTag）表
+            List<TopicTag> topicTags = topicTagService.selectByTopicId(topic.getId());
+            if (!topicTags.isEmpty()) {
+                // 从中间对象（TopicTag）表中抽取出标签 id
+                List<String> tagIds = topicTags.stream().map(TopicTag::getTagId).collect(Collectors.toList());
+                // 根据 tagIds 获取标签集合并设置到 Page 对象中
+                List<Tag> tags = tagMapper.selectBatchIds(tagIds);
+                // 判断标签集合中标签名是否含有对应 tab 的标签
+                Boolean flag = false;
+                for (Tag tag : tags) {
+                    if (tab.equals(tag.getName())) {
+                        flag =true;
+                        break;
+                    }
+                }
+                if(flag) {
+                    topic.setTags(tags);
+                }
+            }
+        });
+        System.out.println("过滤前" + iPage.getRecords());
+        List<PostVO> res = iPage.getRecords().stream().filter(rec -> rec.getTags() != null).collect(Collectors.toList());
+        resPage.setRecords(res);
+        return resPage;
     }
 
 
@@ -146,7 +180,7 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
         // 查询话题
         Page<PostVO> iPage = this.baseMapper.searchByKey(page, keyword);
         // 查询话题的标签
-        setTopicTags(iPage);
+        this.setTopicTags(iPage);
         return iPage;
     }
 }

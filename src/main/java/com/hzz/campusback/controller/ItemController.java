@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController   // 将返回的 java 对象封装成 json 格式的数据
-@RequestMapping("/lostandfound")
+@RequestMapping("/activity")
 public class ItemController extends BaseController{
 
     @Resource   // 注入

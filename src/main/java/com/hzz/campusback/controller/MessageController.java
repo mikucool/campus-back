@@ -83,20 +83,18 @@ public class MessageController extends BaseController {
 
     @GetMapping("/listContact")
     public ApiResult<List<Message>> listContact(@RequestHeader(value = USER_NAME) String username) { // 获取联系人
+
         List<Message> listContact = new ArrayList<>();
         // 获取当前用户 id
         List<User> currentUsers = userService.list(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         User currentUser = currentUsers.get(0);
         String id = currentUser.getId();
-        System.out.println(username + "的Id:" + id);
-        // 查询当前用户的关注
+        // 查询当前用户的关注的用户
         List<Follow> list = followService.list(new LambdaQueryWrapper<Follow>().eq(Follow::getFollowerId, id));
-        System.out.println(username + "的关注:" + list);
         String parentId = "";
-        // 查询每个用户的最新消息记录详情，除了自身
         for (Follow follow : list) {
+            // 查询与每个关注的用户聊天信息
             parentId = follow.getParentId();
-            System.out.println(parentId);
             Message message = messageService.selectByParentId(parentId);
             // 如果消息不为空则添加到集合
             if (message != null) {
@@ -116,6 +114,7 @@ public class MessageController extends BaseController {
                         .content("你已关注我，开始聊天吧")
                         .build();
                 listContact.add(addMessage);
+                messageService.save(addMessage); // 保存到记录中
             }
         }
         return ApiResult.success(listContact);

@@ -13,13 +13,21 @@ import java.util.Map;
 public interface PostService extends IService<Post> {
 
     /**
-     * 获取首页话题列表
+     * 获取首页话题列表(最新和最热)
      *
      * @param page
      * @param tab
      * @return
      */
     Page<PostVO> getList(Page<PostVO> page, String tab);
+
+    /**
+     * 获取首页话题列表(最新和最热之外的部分)
+     * @param page
+     * @param tab
+     * @return
+     */
+    Page<PostVO> getListByTag(Page<PostVO> page, String tab);
     /**
      * 发布
      *
@@ -47,6 +55,8 @@ public interface PostService extends IService<Post> {
     List<Post> getRecommend(String id);
 
     Page<PostVO> searchByKey(String keyword, Page<PostVO> page);
+
+
     /**
      * 关键字检索
      *

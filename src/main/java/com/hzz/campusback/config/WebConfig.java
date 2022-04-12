@@ -16,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
         registry.addResourceHandler("/static/message/**").addResourceLocations("file:C:\\Users\\hzz\\Desktop\\campus_forum\\campus-back\\src\\main\\resources\\static\\message\\");
+        registry.addResourceHandler("/static/avatar/**").addResourceLocations("file:C:\\Users\\hzz\\Desktop\\campus_forum\\campus-back\\src\\main\\resources\\static\\avatar\\");
 
     }
 }

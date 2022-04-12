@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzz.campusback.common.api.ApiResult;
 import com.hzz.campusback.model.dto.CreateTopicDTO;
 import com.hzz.campusback.model.entity.Post;
-import com.hzz.campusback.model.entity.Tag;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
 import com.hzz.campusback.service.PostService;
-import com.hzz.campusback.service.TagService;
 import com.hzz.campusback.service.UserService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +42,40 @@ public class PostController extends BaseController {
     public ApiResult<Page<PostVO>> list(@RequestParam(value = "tab", defaultValue = "latest") String tab,
                                         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
                                         @RequestParam(value = "size", defaultValue = "10") Integer pageSize) {
-        Page<PostVO> list = postService.getList(new Page<>(pageNo, pageSize), tab);
-        return ApiResult.success(list);
+        Page<PostVO> list;
+        System.out.println(tab);
+        if (tab.equals("latest") || tab.equals("hot")) {
+            list = postService.getList(new Page<>(pageNo, pageSize), tab);
+            return ApiResult.success(list);
+        } else {
+            System.out.println("不是热门或最新");
+            switch (tab) {
+                case "hobby":
+                    tab = "爱好";
+                    break;
+
+                case "trade":
+                    tab = "交易";
+                    break;
+
+                case "help":
+                    tab = "求助";
+                    break;
+
+                case "question":
+                    tab = "问答";
+                    break;
+                default:
+                    break;
+            }
+
+            list = postService.getListByTag(new Page<>(pageNo, pageSize), tab);
+            return ApiResult.success(list);
+        }
+
     }
 
     /**
-     *
      * @param userName USER_NAME 从客户端返回的 token 中取出的用户名
      * @param dto
      * @return
@@ -95,7 +121,7 @@ public class PostController extends BaseController {
         Assert.notNull(byId, "来晚一步，话题已不存在");
         Assert.isTrue(byId.getUserId().equals(user.getId()), "你为什么可以删除别人的话题？？？");
         postService.removeById(id);
-        return ApiResult.success(null,"删除成功");
+        return ApiResult.success(null, "删除成功");
     }
 
 }

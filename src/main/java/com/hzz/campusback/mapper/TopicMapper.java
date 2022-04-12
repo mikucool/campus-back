@@ -29,4 +29,11 @@ public interface TopicMapper extends BaseMapper<Post> {
     List<Post> selectRecommend(@Param("id") String id);
 
     Page<PostVO> searchByKey(@Param("page") Page<PostVO> page, @Param("keyword") String keyword);
+
+    /**
+     * 根据标签封装 VO
+     * @param page  page 对象
+     * @return
+     */
+    Page<PostVO> selectPages(@Param("page") Page<PostVO> page);
 }
