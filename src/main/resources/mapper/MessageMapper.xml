@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzz.campusback.mapper.MessageMapper">
+    <select id="selectByParentId" resultType="com.hzz.campusback.model.entity.Message">
+        select *
+        from message m,
+             (select max(create_time) time from message where send_id = #{ParentId}) t
+        where m.create_time=t.time
+    </select>
+
+</mapper>

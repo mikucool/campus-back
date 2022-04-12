@@ -13,8 +13,20 @@ spring:
     password: hzz
     url: jdbc:mysql://localhost:3306/campus_v1
     type: com.zaxxer.hikari.HikariDataSource
+  mvc:
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations: classpath:/
+  servlet:
+    multipart:
+      max-file-size: 300MB # 设置单个文件的大小为300M
+      max-request-size: 500MB # 设置总上传的数据大小为500M
+
 #设置：在控制台显示查询数据库时所用到的 sql 语句
 logging:
   level:
     root: info
     com.hzz.campusrear: info
+
+
