@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzz.campusback.common.api.ApiResult;
 import com.hzz.campusback.model.dto.CreateTopicDTO;
+import com.hzz.campusback.model.dto.FileDTO;
 import com.hzz.campusback.model.entity.Post;
 import com.hzz.campusback.model.entity.User;
 import com.hzz.campusback.model.vo.PostVO;
@@ -11,10 +12,15 @@ import com.hzz.campusback.service.PostService;
 import com.hzz.campusback.service.UserService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +36,7 @@ public class PostController extends BaseController {
     private PostService postService;
     @Resource
     private UserService userService;
-
+    public final static String UPLOAD_PATH_PREFIX = "static/post/";
 
     /**
      * @param tab      类型：最新或最热
@@ -43,12 +49,9 @@ public class PostController extends BaseController {
                                         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
                                         @RequestParam(value = "size", defaultValue = "10") Integer pageSize) {
         Page<PostVO> list;
-        System.out.println(tab);
         if (tab.equals("latest") || tab.equals("hot")) {
             list = postService.getList(new Page<>(pageNo, pageSize), tab);
-            return ApiResult.success(list);
         } else {
-            System.out.println("不是热门或最新");
             switch (tab) {
                 case "hobby":
                     tab = "爱好";
@@ -68,10 +71,9 @@ public class PostController extends BaseController {
                 default:
                     break;
             }
-
             list = postService.getListByTag(new Page<>(pageNo, pageSize), tab);
-            return ApiResult.success(list);
         }
+        return ApiResult.success(list);
 
     }
 
@@ -122,6 +124,35 @@ public class PostController extends BaseController {
         Assert.isTrue(byId.getUserId().equals(user.getId()), "你为什么可以删除别人的话题？？？");
         postService.removeById(id);
         return ApiResult.success(null, "删除成功");
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/fileUpload", method = RequestMethod.POST)
+    public FileDTO uploadImg(HttpServletRequest request) throws IOException {
+        System.out.println("got request");
+        MultipartRequest multipartRequest = (MultipartRequest) request;
+        MultipartFile file = multipartRequest.getFile("file[]");
+        String filename = null;
+        if (file != null) {
+            String realPath = new String("src/main/resources/" + UPLOAD_PATH_PREFIX);
+            File fileDir = new File(realPath);
+            if (!fileDir.exists()) {
+                //生成文件夹
+                fileDir.mkdirs();
+            }
+            // 获取文件名，对文件名还没有优化，存在中文名等文件名问题
+            filename = file.getOriginalFilename().replace(" ", "");
+
+            //构建真实的文件路径
+            File newFile = new File(fileDir.getAbsolutePath() + File.separator + filename);
+            //转存文件到指定路径，如果文件名重复的话，将会覆盖掉之前的文件,这里是把文件上传到 “绝对路径”
+            file.transferTo(newFile);
+        }
+        String url = "http://localhost:8081/" + UPLOAD_PATH_PREFIX + filename;
+        FileDTO fileDTO = new FileDTO();
+        fileDTO.setMessage("上传成功");
+        fileDTO.setUrl(url);
+        return fileDTO;
     }
 
 }

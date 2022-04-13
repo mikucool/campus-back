@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class FileDTO {
     // 参数
-    private String username;
+    private String url;
     // 文件
-    private MultipartFile file;
+    private String message;
 }

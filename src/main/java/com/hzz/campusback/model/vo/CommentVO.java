@@ -12,11 +12,14 @@ public class CommentVO {
 
     private String content;
 
+
     private String topicId;
 
     private String userId;
 
     private String username;
+
+    private String avatar;
 
     private Date createTime;
 

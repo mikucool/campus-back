@@ -58,9 +58,10 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
 
     @Override
     public Page<PostVO> getListByTag(Page<PostVO> page, String tab) {
-        Page<PostVO> resPage = new Page<>();
+
         // 1. 查询所有话题并封装到 VO 中
         Page<PostVO> iPage = this.baseMapper.selectPages(page);
+        Page<PostVO> resPage = new Page<>(iPage.getCurrent(), iPage.getSize()); // 该对象用于封装结果集并返回
         // 2. 将含有标签 tab 的标签集合封装到 VO 中
         // 获取页面记录并遍历
         iPage.getRecords().forEach(topic -> {
@@ -84,7 +85,6 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
                 }
             }
         });
-        System.out.println("过滤前" + iPage.getRecords());
         List<PostVO> res = iPage.getRecords().stream().filter(rec -> rec.getTags() != null).collect(Collectors.toList());
         resPage.setRecords(res);
         return resPage;
@@ -110,8 +110,8 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
     @Override
     @Transactional(rollbackFor = Exception.class) // 使用事务
     public Post create(CreateTopicDTO dto, User user) {
-        Post topic1 = this.baseMapper.selectOne(new LambdaQueryWrapper<Post>().eq(Post::getTitle, dto.getTitle()));
-        Assert.isNull(topic1, "话题已存在，请修改");
+//        Post topic1 = this.baseMapper.selectOne(new LambdaQueryWrapper<Post>().eq(Post::getTitle, dto.getTitle()));
+//        Assert.isNull(topic1, "话题已存在，请修改");
 
         // 封装
         Post topic = Post.builder()

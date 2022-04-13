@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="getCommentsByTopicID" resultMap="topicVO">
-        select comment.*,user.username
+        select comment.*,user.username,user.avatar
         from comment
         join user on user.id = comment.user_id
         where topic_id = #{topicid}
