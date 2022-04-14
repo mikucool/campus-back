@@ -121,7 +121,7 @@ public class MessageController extends BaseController {
     }
 
     @PostMapping(value = "/uploadFile")
-    public ApiResult<Boolean> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ApiResult<Boolean> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         if (file != null) {
             String realPath = new String("src/main/resources/" + UPLOAD_PATH_PREFIX);
             File fileDir = new File(realPath);

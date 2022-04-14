@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         List<String> protectedPaths = new ArrayList<String>();
         protectedPaths.add("/campus/user/info");
         protectedPaths.add("/campus/user/update");
+        protectedPaths.add("/campus/user/updateAvatar");
         protectedPaths.add("/post/create");
         protectedPaths.add("/post/update");
         protectedPaths.add("/post/delete/*");
