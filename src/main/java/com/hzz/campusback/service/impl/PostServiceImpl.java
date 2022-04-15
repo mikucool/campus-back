@@ -64,6 +64,10 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
         // 2. 给相应的记录设置标签
         postVOs.forEach(topic -> {
             // 利用中间表，根据话题 id 查询对应标签 id 的中间对象（TopicTag）表
+            // 对帖子内容的 emoji 转码
+            if(topic.getContent() != null) {
+                topic.setContent(EmojiParser.parseToUnicode(topic.getContent()));
+            }
             List<TopicTag> topicTags = topicTagService.selectByTopicId(topic.getId());
             if (!topicTags.isEmpty()) {
                 // 从中间对象（TopicTag）表中抽取出标签 id
@@ -74,6 +78,7 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
                 Boolean flag = false;
                 for (Tag tag : tags) {
                     if (tab.equals(tag.getName())) {
+
                         flag = true;
                         break;
                     }
@@ -84,6 +89,7 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
             }
         });
         // 到此所有对应的记录被设置了标签，只需将含标签内容的记录过滤出来即可
+
 
         // 3. 过滤，取出对应标签
         List<PostVO> filterList = postVOs.stream().filter(rec -> rec.getTags() != null).collect(Collectors.toList());
@@ -106,6 +112,8 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
             // 利用中间表，根据话题 id 查询对应标签 id 的中间对象（TopicTag）表
             List<TopicTag> topicTags = topicTagService.selectByTopicId(topic.getId());
             if (!topicTags.isEmpty()) {
+                // 对帖子内容的 emoji 转码
+                topic.setContent(EmojiParser.parseToUnicode(topic.getContent()));
                 // 从中间对象（TopicTag）表中抽取出标签 id
                 List<String> tagIds = topicTags.stream().map(TopicTag::getTagId).collect(Collectors.toList());
                 // 根据 tagIds 获取标签集合并设置到 Page 对象中
