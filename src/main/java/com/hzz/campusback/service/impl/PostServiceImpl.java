@@ -58,13 +58,11 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
 
     @Override
     public Page<PostVO> getListByTag(Page<PostVO> page, String tab) {
-
-        // 1. 查询所有话题并封装到 VO 中
-        Page<PostVO> iPage = this.baseMapper.selectPages(page);
-        Page<PostVO> resPage = new Page<>(iPage.getCurrent(), iPage.getSize()); // 该对象用于封装结果集并返回
-        // 2. 将含有标签 tab 的标签集合封装到 VO 中
-        // 获取页面记录并遍历
-        iPage.getRecords().forEach(topic -> {
+        // 思路：
+        // 1. 先查询所有记录
+        List<PostVO> postVOs = this.baseMapper.selectListVO();
+        // 2. 给相应的记录设置标签
+        postVOs.forEach(topic -> {
             // 利用中间表，根据话题 id 查询对应标签 id 的中间对象（TopicTag）表
             List<TopicTag> topicTags = topicTagService.selectByTopicId(topic.getId());
             if (!topicTags.isEmpty()) {
@@ -76,18 +74,29 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
                 Boolean flag = false;
                 for (Tag tag : tags) {
                     if (tab.equals(tag.getName())) {
-                        flag =true;
+                        flag = true;
                         break;
                     }
                 }
-                if(flag) {
+                if (flag) {
                     topic.setTags(tags);
                 }
             }
         });
-        List<PostVO> res = iPage.getRecords().stream().filter(rec -> rec.getTags() != null).collect(Collectors.toList());
-        resPage.setRecords(res);
-        return resPage;
+        // 到此所有对应的记录被设置了标签，只需将含标签内容的记录过滤出来即可
+
+        // 3. 过滤，取出对应标签
+        List<PostVO> filterList = postVOs.stream().filter(rec -> rec.getTags() != null).collect(Collectors.toList());
+        List<PostVO> resList = new ArrayList<>();
+        // 4. 将记录按分页要求得到对应记录数
+        for (int i = 0; i < page.getSize(); i++) {
+            if (i > filterList.size() - 1) break;
+            PostVO postVO = filterList.get((int) ((page.getCurrent() - 1) * page.getSize()) + i);
+            resList.add(postVO);
+        }
+        // 5. 将记录封装到 Page 对象中返回
+        page.setRecords(resList);
+        return page;
     }
 
 

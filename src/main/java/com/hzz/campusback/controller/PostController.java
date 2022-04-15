@@ -49,28 +49,12 @@ public class PostController extends BaseController {
                                         @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
                                         @RequestParam(value = "size", defaultValue = "10") Integer pageSize) {
         Page<PostVO> list;
+        if("最新".equals(tab)) tab = "latest";
+        if("热门".equals(tab)) tab = "hot";
+
         if (tab.equals("latest") || tab.equals("hot")) {
             list = postService.getList(new Page<>(pageNo, pageSize), tab);
         } else {
-            switch (tab) {
-                case "hobby":
-                    tab = "爱好";
-                    break;
-
-                case "trade":
-                    tab = "交易";
-                    break;
-
-                case "help":
-                    tab = "求助";
-                    break;
-
-                case "question":
-                    tab = "问答";
-                    break;
-                default:
-                    break;
-            }
             list = postService.getListByTag(new Page<>(pageNo, pageSize), tab);
         }
         return ApiResult.success(list);
