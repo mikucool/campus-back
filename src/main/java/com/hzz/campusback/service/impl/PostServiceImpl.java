@@ -24,6 +24,7 @@ import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -36,6 +37,9 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
     private TagMapper tagMapper;
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private TopicMapper topicMapper;
 
 
     @Autowired
@@ -112,8 +116,6 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
             // 利用中间表，根据话题 id 查询对应标签 id 的中间对象（TopicTag）表
             List<TopicTag> topicTags = topicTagService.selectByTopicId(topic.getId());
             if (!topicTags.isEmpty()) {
-                // 对帖子内容的 emoji 转码
-                topic.setContent(EmojiParser.parseToUnicode(topic.getContent()));
                 // 从中间对象（TopicTag）表中抽取出标签 id
                 List<String> tagIds = topicTags.stream().map(TopicTag::getTagId).collect(Collectors.toList());
                 // 根据 tagIds 获取标签集合并设置到 Page 对象中
@@ -199,5 +201,11 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
         // 查询话题的标签
         this.setTopicTags(iPage);
         return iPage;
+    }
+
+    @Override
+    public List<PostVO> listEssence() {
+        List<PostVO> postVOList = topicMapper.listEssence();
+        return postVOList;
     }
 }

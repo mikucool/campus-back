@@ -38,4 +38,6 @@ public interface TopicMapper extends BaseMapper<Post> {
     Page<PostVO> selectPages(@Param("page") Page<PostVO> page);
 
     List<PostVO> selectListVO();
+
+    List<PostVO> listEssence();
 }

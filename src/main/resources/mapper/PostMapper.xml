@@ -29,6 +29,7 @@
         t.top,t.essence,
         t.create_time ,
         t.modify_time ,
+        t.essence,
         t.content,
         u.username,
         u.alias,
@@ -125,6 +126,28 @@
                  LEFT JOIN user u
                            ON t.user_id = u.id
         order by t.create_time desc
+    </select>
+
+
+    <select id="listEssence" resultMap="topicVO">
+        SELECT t.id,
+               t.title,
+               t.user_id,
+               t.content,
+               t.comments,
+               t.view,
+               t.collects,
+               t.top,
+               t.essence,
+               t.create_time,
+               t.modify_time,
+               u.username,
+               u.alias,
+               u.avatar
+        FROM post t
+                 LEFT JOIN user u
+                           ON t.user_id = u.id
+        where essence = 1;
     </select>
 
 </mapper>

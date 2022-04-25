@@ -56,6 +56,8 @@ public interface PostService extends IService<Post> {
 
     Page<PostVO> searchByKey(String keyword, Page<PostVO> page);
 
+    List<PostVO> listEssence();
+
 
     /**
      * 关键字检索

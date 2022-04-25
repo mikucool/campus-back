@@ -12,10 +12,8 @@ spring:
     password: hzz
     url: jdbc:mysql://localhost:3306/campus_v1
     type: com.zaxxer.hikari.HikariDataSource
-#  过滤规则
   mvc:
     static-path-pattern: /**
-#  静态资源位置
   web:
     resources:
       static-locations: classpath:/

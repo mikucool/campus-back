@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
  * 用于分页查询，对 Page 对象进行捕捉
  */
 @Configuration
-@MapperScan("com.hzz.campusback.mapper")
 public class MybatisPlusConfig {
 
     /**

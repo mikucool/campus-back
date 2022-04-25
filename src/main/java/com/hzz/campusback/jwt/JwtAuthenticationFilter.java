@@ -53,6 +53,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         protectedPaths.add("/relationship/unsubscribe/*");
         protectedPaths.add("/relationship/validate/*");
         protectedPaths.add("/message/*");
+        protectedPaths.add("/static/*");
+
 
         boolean bFind = false;
         for( String passedPath : protectedPaths ) {

@@ -1,6 +1,7 @@
 package com.hzz.campusback.controller;
 
 import cn.hutool.core.lang.Assert;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hzz.campusback.common.api.ApiResult;
 import com.hzz.campusback.model.dto.CreateTopicDTO;
@@ -138,5 +139,11 @@ public class PostController extends BaseController {
         fileDTO.setUrl(url);
         return fileDTO;
     }
+    //
+    @GetMapping("/getEssenceTopic")
+    public ApiResult<List<PostVO>> getEssenceTopic() {
+        List<PostVO> list = postService.listEssence();
 
+        return ApiResult.success(list);
+    }
 }
