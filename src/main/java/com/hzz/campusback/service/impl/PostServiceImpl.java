@@ -49,7 +49,7 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
     private TagService tagService;
 
     @Autowired
-    private com.hzz.campusback.service.TopicTagService topicTagService;
+    private TopicTagService topicTagService;
 
     @Override
     public Page<PostVO> getList(Page<PostVO> page, String tab) {
@@ -63,7 +63,7 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
     @Override
     public Page<PostVO> getListByTag(Page<PostVO> page, String tab) {
         // 思路：
-        // 1. 先查询所有记录
+        // 1. 先查询所有记录并封装到 page 对象中
         List<PostVO> postVOs = this.baseMapper.selectListVO();
         // 2. 给相应的记录设置标签
         postVOs.forEach(topic -> {
@@ -100,12 +100,14 @@ public class PostServiceImpl extends ServiceImpl<TopicMapper, Post> implements P
         List<PostVO> resList = new ArrayList<>();
         // 4. 将记录按分页要求得到对应记录数
         for (int i = 0; i < page.getSize(); i++) {
-            if (i > filterList.size() - 1) break;
-            PostVO postVO = filterList.get((int) ((page.getCurrent() - 1) * page.getSize()) + i);
+            int index = (int) ((page.getCurrent() - 1) * page.getSize()) + i;
+            if (index > filterList.size() - 1) break;
+            PostVO postVO = filterList.get(index);
             resList.add(postVO);
         }
         // 5. 将记录封装到 Page 对象中返回
         page.setRecords(resList);
+        page.setTotal(filterList.size());
         return page;
     }
 

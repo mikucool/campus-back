@@ -40,7 +40,7 @@
         <where>
             <if test="tab == 'hot'">
                 date(t.create_time) &lt;= date_add(curdate(), interval 1 day)
-                and date(t.create_time) &gt;= date_sub(curdate(), interval 7 day)
+                and date(t.create_time) &gt;= date_sub(curdate(), interval 30 day)
             </if>
         </where>
         <if test="tab != 'hot'">
